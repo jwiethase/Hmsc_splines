@@ -19,9 +19,17 @@ for(mod in model_choices){
    
    for(i in 1:length(chosen_covars)){
       print(chosen_covars[i])
-      Gradient_i = constructGradient_JHW(m_PA_full, 
-                                         focalVariables = str_subset(names(m_PA_full$XData), paste0(chosen_covars[i], "_spline")),
-                                         ngrid = 50)
+      if(grepl("spline", mod)){
+            Gradient_i = constructGradient_JHW(m_PA_full, 
+                                               focalVariables = c(chosen_covars[i], str_subset(names(m_PA_full$XData), paste0(chosen_covars[i], "_spline"))),
+                                               ngrid = 50,
+                                               type = "marginal")
+      } else {
+            Gradient_i = constructGradient_JHW(m_PA_full, 
+                                               focalVariables = chosen_covars[i],
+                                               ngrid = 50,
+                                               type = "marginal")
+      }
       
       pred_PA_i = predict(m_PA_full, Gradient = Gradient_i, expected = TRUE)
       pred_COP_i = predict(m_COP_full, Gradient = Gradient_i, expected = TRUE)
